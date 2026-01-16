@@ -1,0 +1,108 @@
+# LAMP Stack: Linux, Nginx, Wordpress and Database Fundamentals
+
+This repository summarizes practical tasks covered during the mentorship program, focusing on fundamental LAMP Stack.
+
+---
+
+## 1. WordPress Installation on LAMP Stack
+
+This guide walks through setting up a WordPress site using a LAMP stack (Linux, Apache, MySQL, PHP) with Nginx as the web server.
+
+---
+
+## Steps Completed
+
+### Database & User Setup
+
+*   Created a database: `wordpress` with UTF-8 encoding.
+*   Created a MySQL user: `wordpressuser` with password `qwerty`.
+*   Granted privileges (`GRANT ALL ON wordpress.*...`) and flushed permissions.
+
+### PHP Extensions Installation
+
+*   Installed necessary PHP extensions for WordPress via `sudo apt install php-fpm php-curl php-gd ...`.
+*   Restarted PHP-FPM service (`sudo systemctl restart php7.2-fpm`).
+
+### Nginx Configuration
+
+*   Updated `/etc/nginx/sites-available/default` for WordPress configuration.
+*   Set root directory to `/var/www/wordpress`.
+*   Configured location blocks for static files (`.css|.gif|...`) and PHP handling (`try_files $uri $uri/ /index.php...`).
+*   Tested (`sudo nginx -t`) and reloaded (`sudo systemctl reload nginx`) Nginx configuration.
+
+### WordPress Download & Extraction
+
+*   Downloaded latest WordPress release to `/tmp`.
+*   Extracted files (`tar xzvf latest.tar.gz`) and copied to `/var/www/wordpress`.
+*   Set ownership to `www-data` (`sudo chown -R www-data:www-data /var/www/wordpress`).
+
+### WordPress Configuration (`wp-config.php`)
+
+*   Generated secure keys via the WordPress API (`curl -s https://api.wordpress.org`).
+*   Updated `wp-config.php` with database credentials (`DB_NAME`, `DB_USER`, `DB_PASSWORD`) and secure keys.
+*   Set file system write method (`define('FS_METHOD', 'direct');`).
+
+### Web Installation & Finalization
+
+*   Accessed the site via browser (`http://server_domain_or_IP`).
+*   Completed the 5-minute WordPress setup process (site title, user setup, etc.).
+*   Successfully logged into the WordPress admin panel.
+
+---
+
+## Notes
+
+*   Uses self-signed SSL certificate (local development).
+*   Assumes Ubuntu/Debian-based system with `sudo` privileges.
+*   Database and user credentials (`wordpressuser`, `qwerty`) should be changed in production environments.
+*   WordPress is now installed and accessible via the configured domain or IP address.
+
+---
+
+## 3. Process Management: Identifying Parent PIDs (PPID)
+
+### Objective
+Learn how to obtain detailed information about running processes in Linux and understand process hierarchy.
+
+### Tools & Commands Used
+*   `ps`: Process status utility.
+*   `grep`: Filter output using regular expressions.
+*   Pipes (`|`): Chain commands together.
+
+### Key Concepts
+*   The `-o` flag in `ps` allows for user-defined output formats (e.g., `pid`, `ppid`, `cmd`).
+*   The `-e` or `-ax` flags display all running processes in the system, not just those in the current session.
+*   Processes are organized in a parent-child hierarchy. The parent PID (PPID) indicates which process started the current one.
+*   The process with **PID 1** (`systemd` or `init`) is the ultimate parent of most services/daemons.
+
+### Findings (Nginx Example)
+| Process Type | PID | PPID | Parent Process Name |
+| :--- | :--- | :--- | :--- |
+| `master process` | 880 | **1** | `systemd` (init) |
+| `worker process` | 22711+ | **880** | `nginx: master process` |
+
+---
+
+## 4. Database Exploration: Listing WordPress Tables
+
+### Objective
+Practice obtaining information about databases and tables using the MySQL/MariaDB command-line interface.
+
+### Tools & Commands Used
+*   `mysql` client: Command-line interface for the database server.
+*   SQL commands: `SHOW DATABASES;`, `USE database_name;`, `SHOW TABLES;`.
+
+### Key Concepts
+*   You must `USE` a specific database context before listing its internal tables.
+*   All standard WordPress tables typically use a `wp_` prefix (e.g., `wp_posts`, `wp_users`, `wp_options`).
+*   SQL commands must end with a semicolon (`;`) when executed in the interactive MySQL console.
+
+### Findings (WordPress Example)
+Standard WordPress databases contain tables such as:
+*   `wp_posts` (stores actual content/pages)
+*   `wp_users` (stores user accounts)
+*   `wp_options` (stores site settings)
+*   `wp_comments` (stores comments)
+
+---
+
