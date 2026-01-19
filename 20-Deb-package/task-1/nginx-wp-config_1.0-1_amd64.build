@@ -1,0 +1,77 @@
+ dpkg-buildpackage -us -uc -ui
+dpkg-buildpackage: info: source package nginx-wp-config
+dpkg-buildpackage: info: source version 1.0-1
+dpkg-buildpackage: info: source distribution unstable
+dpkg-buildpackage: info: source changed by pchelbisson <pchelbisson@local>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+ fakeroot debian/rules clean
+dh clean
+   dh_clean
+ dpkg-source -b .
+dpkg-source: info: using source format '3.0 (quilt)'
+dpkg-source: info: building nginx-wp-config using existing ./nginx-wp-config_1.0.orig.tar.xz
+dpkg-source: info: building nginx-wp-config in nginx-wp-config_1.0-1.debian.tar.xz
+dpkg-source: info: building nginx-wp-config in nginx-wp-config_1.0-1.dsc
+ debian/rules build
+dh build
+   dh_update_autotools_config
+   dh_autoreconf
+   create-stamp debian/debhelper-build-stamp
+ fakeroot debian/rules binary
+dh binary
+   dh_testroot
+   dh_prep
+   dh_install
+   dh_installdocs
+   dh_installchangelogs
+   dh_perl
+   dh_link
+   dh_strip_nondeterminism
+   dh_compress
+   dh_fixperms
+   dh_missing
+   dh_installdeb
+   dh_gencontrol
+   dh_md5sums
+   dh_builddeb
+dpkg-deb: building package 'nginx-wp-config' in '../nginx-wp-config_1.0-1_all.deb'.
+ dpkg-genbuildinfo
+ dpkg-genchanges  >../nginx-wp-config_1.0-1_amd64.changes
+dpkg-genchanges: info: including full source code in upload
+ dpkg-source --after-build .
+dpkg-buildpackage: info: full upload (original source is included)
+Now running lintian nginx-wp-config_1.0-1_amd64.changes ...
+E: nginx-wp-config changes: bad-distribution-in-changes-file unstable
+E: nginx-wp-config changes: changed-by-address-malformed pchelbisson <pchelbisson@local>
+E: nginx-wp-config: changelog-is-dh_make-template
+E: nginx-wp-config: copyright-contains-dh_make-todo-boilerplate
+E: nginx-wp-config: debian-changelog-file-contains-invalid-email-address pchelbisson@local
+E: nginx-wp-config source: debian-rules-is-dh_make-template
+E: nginx-wp-config: description-is-dh_make-template
+E: nginx-wp-config: helper-templates-in-copyright
+E: nginx-wp-config source: maintainer-address-malformed pchelbisson <pchelbisson@local>
+E: nginx-wp-config: maintainer-address-malformed pchelbisson <pchelbisson@local>
+E: nginx-wp-config source: readme-source-is-dh_make-template
+E: nginx-wp-config: section-is-dh_make-template
+W: nginx-wp-config source: bad-homepage <insert the upstream URL, if relevant>
+W: nginx-wp-config: bad-homepage <insert the upstream URL, if relevant>
+W: nginx-wp-config: copyright-has-url-from-dh_make-boilerplate
+W: nginx-wp-config source: dh-make-template-in-source debian/manpage.1.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/manpage.sgml.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/manpage.xml.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/nginx-wp-config.cron.d.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/nginx-wp-config.doc-base.EX
+W: nginx-wp-config source: dh-make-template-in-source debian/preinst.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/prerm.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/salsa-ci.yml.ex
+W: nginx-wp-config source: dh-make-template-in-source debian/watch.ex
+W: nginx-wp-config: maintainer-script-calls-systemctl postinst:26
+W: nginx-wp-config: maintainer-script-calls-systemctl postrm:30
+W: nginx-wp-config: new-package-should-close-itp-bug
+W: nginx-wp-config: readme-debian-contains-debmake-template
+W: nginx-wp-config source: space-in-std-shortname-in-dep5-copyright <special license> (paragraph at line 6)
+W: nginx-wp-config source: superfluous-clutter-in-homepage <insert the upstream URL, if relevant>
+W: nginx-wp-config: superfluous-clutter-in-homepage <insert the upstream URL, if relevant>
+W: nginx-wp-config: wrong-bug-number-in-closes l3:#nnnn
+Finished running lintian.

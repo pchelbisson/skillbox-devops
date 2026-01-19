@@ -1,0 +1,5 @@
+nginx-wp-config (1.0-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- pchelbisson <pchelbisson@local>  Mon, 19 Jan 2026 13:54:31 +0000

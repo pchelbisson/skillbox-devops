@@ -1,0 +1,34 @@
+Format: 1.8
+Date: Mon, 19 Jan 2026 13:54:31 +0000
+Source: nginx-wp-config
+Binary: nginx-wp-config
+Architecture: source all
+Version: 1.0-1
+Distribution: unstable
+Urgency: medium
+Maintainer: pchelbisson <pchelbisson@local>
+Changed-By: pchelbisson <pchelbisson@local>
+Description:
+ nginx-wp-config - <insert up to 60 chars description>
+Changes:
+ nginx-wp-config (1.0-1) unstable; urgency=medium
+ .
+   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+Checksums-Sha1:
+ b951267eb2b3bee3282f749f8d24a420c3193bc1 878 nginx-wp-config_1.0-1.dsc
+ 0637a280dadcb73fb33daa306a723015355593cd 1544 nginx-wp-config_1.0.orig.tar.xz
+ 8ec9fc088e8ec8f08925e904db268bf486806bd9 8124 nginx-wp-config_1.0-1.debian.tar.xz
+ e0d6f1b597cb86183bde79984264abda1ff652a6 4460 nginx-wp-config_1.0-1_all.deb
+ e061ae01c69e75c91252b3ce79f114f7a8587133 5532 nginx-wp-config_1.0-1_amd64.buildinfo
+Checksums-Sha256:
+ 5286b13831331f9b77c167d71aff323f70b9896fb987f91420753bff755f27e4 878 nginx-wp-config_1.0-1.dsc
+ 690a02d20875d80f2d615ac1cf5140734e1d599fefa45f53d2e8928b23605e79 1544 nginx-wp-config_1.0.orig.tar.xz
+ 98f91392d87b586ed24f5a65409c941f656f9fd1359d31042ae3f6aa8e793657 8124 nginx-wp-config_1.0-1.debian.tar.xz
+ d4a71ea7e318d1027f85c16b7d2096fd5c396bf84d317e9adb55e317f8216c99 4460 nginx-wp-config_1.0-1_all.deb
+ babd45a2c7b537d29c37509787ee985338411973eab2a1b5f76c4d0cd4097e2e 5532 nginx-wp-config_1.0-1_amd64.buildinfo
+Files:
+ c56427fd7b36f0ba425d9df09eabecfb 878 unknown optional nginx-wp-config_1.0-1.dsc
+ d350c29d099a1466d073e67663fd60e9 1544 unknown optional nginx-wp-config_1.0.orig.tar.xz
+ cf3921fddcb2f0a6825d7407bce2e996 8124 unknown optional nginx-wp-config_1.0-1.debian.tar.xz
+ 893836389d1a272414079b6aa532911d 4460 unknown optional nginx-wp-config_1.0-1_all.deb
+ 962753e877065c1c22b0374dc53e93da 5532 unknown optional nginx-wp-config_1.0-1_amd64.buildinfo

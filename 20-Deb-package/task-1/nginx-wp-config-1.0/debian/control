@@ -1,0 +1,15 @@
+Source: nginx-wp-config
+Section: unknown
+Priority: optional
+Maintainer: pchelbisson <pchelbisson@local>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/nginx-wp-config
+#Vcs-Git: https://salsa.debian.org/debian/nginx-wp-config.git
+
+Package: nginx-wp-config
+Architecture: all
+Depends: ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
