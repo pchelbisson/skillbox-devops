@@ -1,0 +1,27 @@
+# Task 1: Alertmanager Email Notifications Setup
+
+## Objective
+Configure Prometheus Alertmanager to send critical alert notifications via Gmail SMTP.
+
+## Infrastructure
+- **Monitoring:** Prometheus
+- **Alerting:** Alertmanager
+- **Notification Channel:** SMTP (Gmail)
+
+## Implementation Details
+
+1.  **Alertmanager Configuration:**
+    - Configured `global` SMTP settings using Google App Passwords for secure authentication.
+    - Defined a `route` to direct alerts to the `email-me` receiver.
+    - Set up a `receiver` with the specific email destination.
+
+2.  **Alerting Rules:**
+    - Created a test rule `TestEmailAlert` in `alert_rules.yml` with a constant `up == 1` expression to trigger an immediate notification for verification.
+
+3.  **Service Integration:**
+    - Linked Alertmanager to Prometheus in `prometheus.yml` under the `alerting` block.
+    - Reloaded services to apply configurations.
+
+## Verification
+- **Alertmanager UI:** Confirmed the alert reached the "Firing" state.
+- **Email:** Successfully received the notification in the inbox (see attached screenshots).
