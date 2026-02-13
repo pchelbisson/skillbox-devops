@@ -1,0 +1,28 @@
+stages:
+  - test
+  - build
+  - post-build-test
+
+unit-testing:
+  stage: test
+  script:
+    - echo "Running automated tests..."
+    - echo "All tests passed successfully!"
+
+build-app:
+  stage: build
+  script:
+    - echo "Starting to build the app..."
+    - mkdir -p build/
+    - echo "Application version 1.0" > build/app.txt
+    - echo "Assembly complete."
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 hour
+
+smoke-test:
+  stage: post-build-test
+  script:
+    - "echo 'Running an abstract test after building (smoke test)...'"
+    - "if [ -f build/app.txt ]; then echo 'Build artifact found, test passed!'; else echo 'Error: artifact not found'; exit 1; fi"
