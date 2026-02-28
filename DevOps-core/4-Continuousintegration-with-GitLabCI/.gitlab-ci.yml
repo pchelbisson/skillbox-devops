@@ -1,0 +1,33 @@
+image: node:20-bookworm
+
+
+cache:
+  key: "v2-yarn-cache"
+  paths:
+    - node_modules
+
+stages:
+ - install
+ - test
+
+install_dependencies:
+  stage: install
+  script:
+    - yarn install --network-timeout 100000
+  tags:
+    - docker
+
+run_tests:
+  stage: test
+  script:
+    - export SKIP_PREFLIGHT_CHECK=true
+    - yarn test --watchAll=false --ci
+  tags:
+    - docker
+
+run_lint:
+  stage: test
+  script:
+    - yarn lint
+  tags:
+    - docker
