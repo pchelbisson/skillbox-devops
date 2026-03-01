@@ -1,0 +1,104 @@
+stages:
+  - build
+  - test
+  - deploy
+  - revert
+
+variables:
+  docker_html_path: "/var/www"
+  env: prod
+  deploy_subfolder: html
+
+install_dependencies:
+  image: node:16.20.2-bullseye
+  stage: build
+  script:
+    - yarn install --ignore-engines
+    - yarn build
+    - mv build build_$env
+  cache:
+    - key:
+        files:
+          - yarn.lock
+      paths:
+        - node_modules
+    - key: "$CI_COMMIT_SHA-$env"
+      paths:
+        - build_$env
+
+build_staging:
+  extends: install_dependencies
+  variables:
+    env: staging
+    REACT_APP_WEBSITE_PREFIX: "[branch=$CI_COMMIT_BRANCH] "
+    PUBLIC_URL: "/staging/$CI_COMMIT_BRANCH"
+
+deploy_staging:
+  extends: deploy_prod
+  variables:
+    deploy_subfolder: staging/$CI_COMMIT_BRANCH
+    env: staging
+  when: always
+  only:
+    - master
+    - /feature-.*/
+
+deploy_prod:
+  stage: deploy
+  script:
+    - ls -la
+    - cp -r build_$env $docker_html_path/test-app/${env}_$CI_COMMIT_SHA
+    - cd $docker_html_path/test-app && ls -t | grep "${env}_" | tail -n +6 | xargs rm -rf -- || true
+    - rm -rf $docker_html_path/$deploy_subfolder
+    - ln -s $docker_html_path/test-app/${env}_$CI_COMMIT_SHA $docker_html_path/$deploy_subfolder
+  cache:
+    - key: "$CI_COMMIT_SHA-$env"
+      paths:
+        - build_$env
+      policy: pull
+
+activate_staging:
+  extends: activate_prod
+  variables:
+    deploy_subfolder: staging/$CI_COMMIT_BRANCH
+    env: staging
+  when: always
+  only:
+    - master
+    - /feature-.*/
+
+activate_prod:
+  stage: deploy
+  script:
+    - rm -rf $docker_html_path/$deploy_subfolder
+    - ln -fsnv /var/www/test-app/${env}_$CI_COMMIT_SHA $docker_html_path/$deploy_subfolder
+  when: manual
+  only:
+    - master
+
+revert:
+  stage: revert
+  when: manual
+  script:
+    - cp -Pv --remove-destination $docker_html_path/test-app/${env}_$CI_COMMIT_SHA/prev-version $docker_html_path/html
+
+revert_two_steps:
+  stage: revert
+  when: manual
+  script:
+    - CURRENT_VER_PATH=$(readlink -f $docker_html_path/$deploy_subfolder)
+    - FIRST_PREV=$(readlink -f $CURRENT_VER_PATH/prev-version)
+    - SECOND_PREV=$(readlink -f $FIRST_PREV/prev-version)
+    - echo "Current $CURRENT_VER_PATH"
+    - echo "Step 1 Back $FIRST_PREV"
+    - echo "Step 2 Back (Target) $SECOND_PREV"
+    - |
+      if [ -d "$SECOND_PREV" ] && [ "$SECOND_PREV" != "$FIRST_PREV" ]; then
+        ln -fsnv "$SECOND_PREV" "$docker_html_path/$deploy_subfolder"
+        echo "Successfully rolled back 2 versions to $SECOND_PREV"
+      else
+        echo "Error: Second previous version not found or history is too short!"
+        exit 1
+      fi
+  only:
+    - master
