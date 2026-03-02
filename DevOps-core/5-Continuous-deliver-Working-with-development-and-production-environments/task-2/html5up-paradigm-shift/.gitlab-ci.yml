@@ -1,0 +1,30 @@
+stages:
+  - deploy
+  - rollback
+
+variables:
+  DEPLOY_DIR: "/var/www/static-site"
+
+deploy_job:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - mkdir -p $DEPLOY_DIR/releases/$CI_COMMIT_SHORT_SHA
+    - cp -r ./* $DEPLOY_DIR/releases/$CI_COMMIT_SHORT_SHA
+    - "[ -f $DEPLOY_DIR/releases/$CI_COMMIT_SHORT_SHA/index.html ] || (echo 'Index.html missing!' && exit 1)"
+    - ln -sfn $DEPLOY_DIR/releases/$CI_COMMIT_SHORT_SHA $DEPLOY_DIR/current
+    - cd $DEPLOY_DIR/releases && ls -t | tail -n +6 | xargs rm -rf 2>/dev/null || true
+
+rollback_job:
+  stage: rollback
+  when: manual
+  script:
+    - PREV_RELEASE=$(ls -t $DEPLOY_DIR/releases/ | sed -n '2p')
+    - |
+      if [ -z "$PREV_RELEASE" ]; then
+        echo "No previous version found for rollback!"
+        exit 1
+      fi
+    - ln -sfn $DEPLOY_DIR/releases/$PREV_RELEASE $DEPLOY_DIR/current
+    - echo "Rolled back to $PREV_RELEASE"
