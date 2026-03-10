@@ -1,0 +1,109 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    project_path: /var/www
+    repository: https://gitlab.skillbox.ru/andrey_lagutin/deploy_react_app_to_the_cloud.git
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Purge ALL old node related packages
+      apt:
+        name:
+          - nodejs
+          - libnode72
+          - libnode-dev
+          - npm
+        state: absent
+        purge: yes
+        force: yes
+
+    - name: Remove old NodeSource lists
+      file:
+        path: "/etc/apt/sources.list.d/nodesource.list"
+        state: absent
+
+    - name: Add NodeSource repository for Node.js 20.x
+      shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+
+    
+    - name: Install Node.js 16 and Nginx
+      apt:
+        name:
+          - nodejs
+          - curl
+          - git
+          - nginx
+        state: present
+        update_cache: yes
+
+    - name: Install Yarn globally via NPM
+      shell: npm install -g yarn --force
+
+    - name: Delete the default Nginx html directory
+      file:
+        path: "{{ project_path }}/html"
+        state: absent
+
+    - name: Set release and current paths
+      set_fact:
+        release_path: "{{ project_path }}/releases/{{ lookup('pipe','date +%Y%m%d%H%M%S') }}"
+        current_path: "{{ project_path }}/html"
+    
+    - name: Create project and release folders
+      file:
+        path: "{{ item }}"
+        mode: '0755'
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        recurse: yes
+      loop:
+        - "{{ project_path }}"
+        - "{{ project_path }}/releases"
+
+    - name: Clone the repository
+      git:
+        repo: "{{ repository }}"
+        dest: "{{ release_path }}"
+
+    - name: Add IP address of instance to App.js
+      replace:
+        path: "{{ release_path }}/src/App.js"
+        regexp: 'Test of revert'
+        replace: '10.10.10.10'
+
+    - name: Force Clean environment
+      shell: "rm -rf node_modules yarn.lock package-lock.json"
+      args:
+        chdir: "{{ release_path }}"
+
+    - name: Patch package.json for Babel Resolution
+      shell: |
+        sed -i 's/"dependencies": {/"resolutions": { "@babel\/core": "^7.16.0" }, "dependencies": {/' package.json
+      args:
+        chdir: "{{ release_path }}"
+
+    - name: YARN install
+      shell: "yarn install --ignore-engines"
+      args:
+        chdir: "{{ release_path }}"
+        
+    - name: Yarn Build
+      shell: "yarn build"
+      args:
+        chdir: "{{ release_path }}"
+      environment:
+        REACT_APP_WEBSITE_PREFIX: "Andrey Lagutin"
+        NODE_OPTIONS: "--openssl-legacy-provider"
+
+    - name: Update Symlink to point to the new build
+      file:
+        src: "{{ release_path }}/build"
+        dest: "{{ current_path }}"
+        state: link
+        force: yes
