@@ -1,0 +1,18 @@
+services:
+  web-app:
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - back-tier
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:alpine"
+    networks:
+      - back-tier
+
+networks:
+  back-tier:
+    driver: bridge
