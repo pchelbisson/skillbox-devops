@@ -1,0 +1,78 @@
+services:
+  ldap:
+    image: osixia/openldap:latest
+    container_name: ldap
+    environment:
+      - LDAP_DOMAIN=${LDAP_DOMAIN}
+      - LDAP_ADMIN_PASSWORD=${LDAP_ADMIN_PASSWORD}
+    volumes:
+      - ./ldap/data/slapd/database:/var/lib/ldap
+      - ./ldap/data/slapd/config:/etc/ldap/slapd.d
+    networks:
+      - docker_final_net
+  ldap_admin:
+    image: osixia/phpldapadmin:latest
+    container_name: ldap_admin
+    ports:
+      - "6443:443"
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+      - PHPLDAPADMIN_HTTPS=true
+    networks:
+      - docker_final_net
+    depends_on:
+      - ldap
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: always
+    ports:
+      - "8080:80"
+      - "2222:22"
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+    networks:
+      - docker_final_net
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://192.168.1.75'
+        nginx['listen_port'] = 80
+        puma['worker_timeout'] = 300
+        puma['worker_processes'] = 2
+        prometheus_monitoring['enable'] = false
+        sidekiq['max_concurrency'] = 5
+  mongodb:
+    image: bitnami/mongodb:latest
+    container_name: mongodb
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_NAME=rs0
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongodb/data:/bitnami/mongodb
+    networks:
+      - docker_final_net
+
+
+  rocketchat:
+    image: registry.rocket.chat/rocketchat/rocket.chat:latest
+    container_name: rocketchat
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/rocketchat?replicaSet=rs0
+      - MONGO_OPLOG_URL=mongodb://mongodb:27017/local?replicaSet=rs0
+      - ROOT_URL=http://192.168.1.75:3000
+    depends_on:
+      - mongodb
+    networks:
+      - docker_final_net
+
+
+networks:
+  docker_final_net:
+    driver: bridge

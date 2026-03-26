@@ -1,0 +1,9 @@
+ldap/data/
+mongodb/
+.env
+gitlab/data/
+gitlab/logs/
+!gitlab/config/
+gitlab/config/*
+!gitlab/config/gitlab.rb
+
