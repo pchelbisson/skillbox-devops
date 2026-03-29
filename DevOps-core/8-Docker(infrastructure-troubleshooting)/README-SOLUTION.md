@@ -36,3 +36,13 @@ Successfully restored the core data layer:
 **Key Takeaways**:
 
 > _"During this project, I focused on infrastructure stability and network isolation. While the application layer (todo/consumers) remained outside the initial troubleshooting scope, the underlying data-link layer was fully restored and optimized for secure internal communication."_
+
+---
+
+**Service Status & Constraints:**
+
+- ✅ **Database (MySQL) & Cache (Redis):** Fully operational and optimized.
+    
+- ⚠️ **Application Layer (Todo/Consumers):** These services remain in an `Exited` state by design. This repository focuses strictly on **infrastructure-level troubleshooting** (networking, volume mounting, Dockerfile syntax, and compose orchestration) rather than debugging internal application-specific code (uWSGI/Python logic).
+
+**View the solution and detailed troubleshooting report here: [[Link to your Pull Request](https://github.com/pchelbisson/skillbox-devops/pull/4)]**
