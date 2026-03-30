@@ -60,7 +60,7 @@ Refactoring the codebase into professional Ansible Roles for better maintainabil
 
 To see the technical transition from scripts to architectural roles, view the pending Pull Request:
 
-- **Pull Request:** [Link to GitHub PR]
+- **Pull Request:** [[Link to GitHub PR](https://github.com/pchelbisson/skillbox-devops/pull/5)]
     
 - **Status:** Refactoring Complete / Testing Passed.
     
