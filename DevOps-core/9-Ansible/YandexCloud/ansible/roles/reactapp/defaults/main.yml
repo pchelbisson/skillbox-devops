@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/reactapp
+project_path: "/var/www/react_app"
+repository: "https://gitlab.skillbox.ru/andrey_lagutin/deploy_react_app_to_the_cloud.git"
+packages:
+  - nodejs
+  - git
+  - yarn

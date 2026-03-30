@@ -1,0 +1,15 @@
+---
+- name: Deploy ReactJS Application
+  hosts: reactjs_servers
+  become: yes
+  roles:
+    - reactapp
+
+- name: Configure Nginx Proxy
+  hosts: nginx_servers
+  become: yes
+  vars:
+    reactjs_host_ip: "{{ hostvars['react_app'].ansible_default_ipv4.address }}"
+    reactjs_host_port: "80"
+  roles:
+    - nginx

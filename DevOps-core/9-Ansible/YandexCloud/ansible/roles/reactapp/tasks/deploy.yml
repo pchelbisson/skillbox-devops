@@ -1,0 +1,27 @@
+- name: Set release path
+  set_fact:
+    release_path: "{{ project_path }}/releases/{{ lookup('pipe','date +%Y%m%d%H%M%S') }}"
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: ubuntu
+  loop:
+    - "{{ project_path }}"
+    - "{{ project_path }}/releases"
+
+- name: Clone repository
+  git:
+    repo: "{{ repository }}"
+    dest: "{{ release_path }}"
+
+- name: Configure and Start App
+  shell: |
+    sudo setcap 'cap_net_bind_service=+ep' $(which node)
+    yarn install
+    pm2 delete ReactJS || true
+    NODE_OPTIONS="--openssl-legacy-provider" PORT=80 pm2 start npm --name ReactJS -- start
+  args:
+    chdir: "{{ release_path }}"
