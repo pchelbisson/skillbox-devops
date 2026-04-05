@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app-node:
+    image: nginx:alpine
+    container_name: app-node
+  app-exporter:
+    image: prom/node-exporter:latest
+    container_name: app-exporter
+
+  db-node:
+    image: postgres:alpine
+    container_name: db-node
+    environment:
+      POSTGRES_PASSWORD: password
+  db-exporter:
+    image: prom/node-exporter:latest
+    container_name: db-exporter
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+    ports:
+      - "9090:9090"
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+
+volumes:
+  grafana-storage:

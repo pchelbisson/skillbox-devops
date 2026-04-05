@@ -1,0 +1,38 @@
+groups:
+  - name: shop_alerts
+    rules:
+      - alert: DatabaseStorageFull
+        expr: node_filesystem_avail_bytes{job="db_server"} < 1073741824
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database is running out of space"
+          description: "Only {{ $value | humanize1024 }} left on DB node."
+
+      - alert: WebServerHighLoad
+        expr: node_load1{job="app_server"} > 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "App server is struggling"
+          description: "Load average is {{ $value }}. Check for traffic spikes."
+
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} stoped"
+          description: "Target {{ $labels.job }} is down for more than 1 minute."
+
+      - alert: NetworkFlood
+        expr: sum(rate(node_network_receive_bytes_total{device!="lo"}[1m])) > 52428800
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Network Traffic on {{ $labels.instance }}"
+          description: "Incoming traffic is above 50MB/s (Current: {{ $value | humanize1024 }}B/s). Possible DDoS or large sync."
