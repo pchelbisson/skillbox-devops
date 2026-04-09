@@ -1,0 +1,17 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/reactapp
+- name: Add NodeSource repository
+  shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ packages }}"
+
+- name: Install pm2 globally
+  npm:
+    name: pm2
+    global: yes
